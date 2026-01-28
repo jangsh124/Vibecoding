@@ -1,1 +1,69 @@
-/* Add styles here */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --text-color: #333;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --glow-color: rgba(106, 17, 203, 0.4);
+}
+
+.dark-mode {
+    --background-color: #1a1a1a;
+    --card-background: #2a2a2a;
+    --text-color: #f0f2f5;
+    --shadow-color: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    width: 100%;
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+header p {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin: 0;
+}
+
+.theme-switcher {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: none;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+main {
+    width: 100%;
+    max-width: 600px;
+}
