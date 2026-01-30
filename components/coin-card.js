@@ -29,8 +29,18 @@ class CoinCard extends HTMLElement {
         const priceChange = coin.price_change_percentage_24h;
         const priceChangeColor = priceChange >= 0 ? 'var(--primary-color)' : 'var(--secondary-color)';
         const formattedPrice = coin.current_price ? `$${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A';
-        const formattedMarketCap = coin.market_cap ? `$${coin.market_cap.toLocaleString()}` : 'N/A';
         const formattedPriceChange = priceChange ? `${priceChange.toFixed(2)}%` : 'N/A';
+
+        let formattedMarketCap = 'N/A';
+        if (coin.market_cap) {
+            if (coin.market_cap >= 1_000_000_000) {
+                formattedMarketCap = `$${(coin.market_cap / 1_000_000_000).toFixed(2)}B`;
+            } else if (coin.market_cap >= 1_000_000) {
+                formattedMarketCap = `$${(coin.market_cap / 1_000_000).toFixed(2)}M`;
+            } else {
+                formattedMarketCap = `$${coin.market_cap.toLocaleString()}`;
+            }
+        }
 
         const glowColor = priceChange >= 0 ? '#00ff7f' : '#ff005a'; // Emerald Green or Ruby Red
 
@@ -86,17 +96,13 @@ class CoinCard extends HTMLElement {
                     color: ${priceChangeColor};
                     display: flex;
                     align-items: center;
-                    gap: 5px;
+                    gap: 8px;
                     margin-bottom: 10px;
                 }
                 .market-cap {
                     font-size: 0.9rem;
                     color: var(--text-secondary-color, #aaa);
                     margin-top: 5px;
-                }
-                .kickpoint-icon {
-                    width: 20px;
-                    height: 20px;
                 }
             </style>
             <img src="${coin.image}" alt="${coin.name}" class="coin-image">
@@ -105,24 +111,9 @@ class CoinCard extends HTMLElement {
             <p class="coin-price">${formattedPrice}</p>
             <div class="price-change">
                 <span>${formattedPriceChange}</span>
-                ${this.getKickpointIcon(priceChange)}
             </div>
             <p class="market-cap">Mkt Cap: ${formattedMarketCap}</p>
         `;
-    }
-
-    getKickpointIcon(priceChange) {
-        let icon = '';
-        if (priceChange > 5) {
-            icon = 'laser-eyes';
-        } else if (priceChange >= 0) {
-            icon = 'rocket';
-        } else if (priceChange < -5) {
-            icon = 'despair';
-        } else {
-            icon = 'crying';
-        }
-        return `<img src="assets/icons/${icon}.svg" alt="${icon}" class="kickpoint-icon">`;
     }
 }
 
