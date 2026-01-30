@@ -15,32 +15,28 @@ This project is an interactive crypto dashboard that displays the top 10 cryptoc
 *   **Real-time Cryptocurrency Data:**
     *   Displays the top 10 cryptocurrencies by market cap using the CoinGecko API.
     *   Data automatically refreshes every 5 minutes.
-    *   **Market Cap Formatting:** Market capitalization is displayed in a shortened format (e.g., `$123.45B` for billions, `$67.89M` for millions) for better readability.
 *   **Modular Web Components:**
     *   A `<coin-card>` custom element encapsulates the structure, style, and logic for displaying each cryptocurrency.
-*   **Dynamic Theme Switcher:**
-    *   Users can toggle between themes, and the preference is saved.
+*   **Data Integrity & Flexible UI:**
+    *   Prediction data is based on publicly available information only.
+    *   The UI gracefully handles a variable number of predictions.
+*   **Interactive Time-Slider & Roadmap:**
+    *   An interactive slider allows users to explore future milestones from 2026 to 2030.
+    *   Features real-time text updates with a "glitch" effect and a dynamic background glow that intensifies as the year approaches 2030.
 
-## Current Task: Step 6 - Data Integrity & Flexible UI
+## Current Task: Step 5 - Animated Price Target Chart
 
-### 1. **Data Authenticity**
-*   **Action:** Refine the prediction data in `data/cryptoData.js` to ensure data integrity.
+### 1. **Chart Generation (`detail.js`)**
+*   **Action:** Replace the static grid of price targets with a dynamic bar chart.
 *   **Details:**
-    *   Remove any speculative or fabricated price predictions.
-    *   Only include price targets that have been publicly discussed or reported by the specified firms and individuals.
-    *   As a result, the number of predictions will vary for each cryptocurrency based on publicly available information. Some may have many predictions, others may have few or none.
+    *   Create a new function to generate the HTML for the bar chart from the `institutionalPredictions` data.
+    *   A helper function will parse price strings (e.g., "$1,480,000") into numerical values.
+    *   Bar heights will be normalized relative to the highest prediction for the specific coin, ensuring each chart is visually balanced.
+    *   After rendering, a `.loaded` class will be added to the chart container to trigger the entry animation.
 
-### 2. **Flexible Prediction Grid**
-*   **Action:** Update the CSS for the prediction grid to handle a variable number of items gracefully.
+### 2. **Styling and Animation (`detail.css`)**
+*   **Action:** Style the new bar chart and implement the entry animation.
 *   **Details:**
-    *   Modify `.prediction-grid` in `detail.css` to use a responsive layout (e.g., `repeat(auto-fit, minmax(250px, 1fr))`).
-    *   This will ensure the layout looks clean and balanced whether there is 1, 2, 3, 4, 5, or 6 predictions, preventing awkward empty spaces.
-
-### 3. **Pundit & Firm List**
-*   **Status:** The list remains the same, but predictions will only be shown where available.
-    *   Ark Invest
-    *   VanEck
-    *   J.P. Morgan
-    *   Goldman Sachs
-    *   Tom Lee (Fundstrat)
-    *   Michael Saylor (MicroStrategy)
+    *   The chart will use `flexbox` to align bars from the bottom.
+    *   Each bar will have a `transform: scaleY(0)` initial state and will transition to `scaleY(1)` when the `.loaded` class is applied, creating a "grow up" effect.
+    *   Bars will be styled with gradients and colors derived from the `--primary-glow` variable to match the futuristic theme.
