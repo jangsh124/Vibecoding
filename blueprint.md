@@ -17,13 +17,30 @@ This project is an interactive crypto dashboard that displays the top 10 cryptoc
     *   Data automatically refreshes every 5 minutes.
     *   **Market Cap Formatting:** Market capitalization is displayed in a shortened format (e.g., `$123.45B` for billions, `$67.89M` for millions) for better readability.
 *   **Modular Web Components:**
-    *   A `<coin-card>` custom element encapsulates the structure, style, and logic for displaying each cryptocurrency. This includes the coin's icon, name, symbol, current price, 24-hour price change, and market cap.
+    *   A `<coin-card>` custom element encapsulates the structure, style, and logic for displaying each cryptocurrency.
 *   **Dynamic Theme Switcher:**
-    *   A button allows users to toggle between the default dark theme and a potential future light theme. The user's preference is saved in `localStorage`.
+    *   Users can toggle between themes, and the preference is saved.
 
-## Project Structure
-*   `index.html`: The main HTML file containing the page structure.
-*   `style.css`: Contains all global styles, including the futuristic background, theme variables, and responsive grid layout.
-*   `main.js`: The main application script. It fetches data from the API, manages the theme, and dynamically populates the main grid with `<coin-card>` components.
-*   `components/coin-card.js`: The JavaScript file that defines the `<coin-card>` custom element, including its HTML structure, encapsulated styles, and data rendering logic.
-*   `blueprint.md`: This file, documenting the project's features, design, and structure.
+## Current Task: Step 6 - Data Integrity & Flexible UI
+
+### 1. **Data Authenticity**
+*   **Action:** Refine the prediction data in `data/cryptoData.js` to ensure data integrity.
+*   **Details:**
+    *   Remove any speculative or fabricated price predictions.
+    *   Only include price targets that have been publicly discussed or reported by the specified firms and individuals.
+    *   As a result, the number of predictions will vary for each cryptocurrency based on publicly available information. Some may have many predictions, others may have few or none.
+
+### 2. **Flexible Prediction Grid**
+*   **Action:** Update the CSS for the prediction grid to handle a variable number of items gracefully.
+*   **Details:**
+    *   Modify `.prediction-grid` in `detail.css` to use a responsive layout (e.g., `repeat(auto-fit, minmax(250px, 1fr))`).
+    *   This will ensure the layout looks clean and balanced whether there is 1, 2, 3, 4, 5, or 6 predictions, preventing awkward empty spaces.
+
+### 3. **Pundit & Firm List**
+*   **Status:** The list remains the same, but predictions will only be shown where available.
+    *   Ark Invest
+    *   VanEck
+    *   J.P. Morgan
+    *   Goldman Sachs
+    *   Tom Lee (Fundstrat)
+    *   Michael Saylor (MicroStrategy)

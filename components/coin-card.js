@@ -10,11 +10,24 @@ class CoinCard extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        this.addEventListener('click', this.handleClick);
+    }
+
+    disconnectedCallback() {
+        this.removeEventListener('click', this.handleClick);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'coin-data' && oldValue !== newValue) {
             this.render();
+        }
+    }
+
+    handleClick() {
+        const coinData = this.getAttribute('coin-data');
+        if (coinData) {
+            const coin = JSON.parse(coinData);
+            window.location.href = `/detail.html?coin=${coin.id}`;
         }
     }
 
@@ -59,6 +72,7 @@ class CoinCard extends HTMLElement {
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                     transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    cursor: pointer;
                     width: 100%;
                 }
                 :host(:hover) {
