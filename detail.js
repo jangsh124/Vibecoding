@@ -112,15 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Inject TradingView widget script for Bitcoin
         if (coinId === 'bitcoin') {
             const tvContainer = document.getElementById('tv-widget');
-            const widgetDiv = document.createElement('div');
-            widgetDiv.className = 'tradingview-widget-container__widget';
-            tvContainer.appendChild(widgetDiv);
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            tvContainer.appendChild(iframe);
 
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-            script.async = true;
-            script.textContent = JSON.stringify({
+            const config = JSON.stringify({
                 "symbols": [["BINANCE:BTCUSDT|1D"]],
                 "lineWidth": 2,
                 "lineType": 0,
@@ -155,7 +153,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 "hideMarketStatus": false,
                 "hideSymbolLogo": false
             });
-            tvContainer.appendChild(script);
+
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`<!DOCTYPE html>
+<html><head><style>body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head>
+<body>
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>${config}<\/script>
+</div>
+</body></html>`);
+            iframeDoc.close();
         }
 
         const chartArea = document.querySelector('.chart-area');
