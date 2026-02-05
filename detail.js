@@ -1,5 +1,15 @@
 import { cryptoData } from './data/cryptoData.js';
 
+// TradingView symbol mapping for each coin
+const TRADINGVIEW_SYMBOLS = {
+    'bitcoin': 'BINANCE:BTCUSDT',
+    'ethereum': 'BINANCE:ETHUSDT',
+    'ripple': 'BINANCE:XRPUSDT',
+    'chainlink': 'BINANCE:LINKUSDT',
+    'bittensor': 'BINANCE:TAOUSDT',
+    'numeraire': 'BINANCE:NMRUSDT'
+};
+
 function hexToRgb(hex) {
     let r = 0, g = 0, b = 0;
     if (hex.length == 4) {
@@ -85,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // TradingView chart section (Bitcoin only for now)
+        // TradingView chart section for all supported coins
         let tradingViewSection = '';
-        if (coinId === 'bitcoin') {
+        if (TRADINGVIEW_SYMBOLS[coinId]) {
             tradingViewSection = `
                 <div class="tradingview-section">
                     <h3>Live Chart</h3>
@@ -109,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ${tradingViewSection}
         `;
 
-        // Inject TradingView widget script for Bitcoin
-        if (coinId === 'bitcoin') {
+        // Inject TradingView widget script for supported coins
+        if (TRADINGVIEW_SYMBOLS[coinId]) {
             const tvContainer = document.getElementById('tv-widget');
             const iframe = document.createElement('iframe');
             iframe.style.width = '100%';
@@ -118,8 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.style.border = 'none';
             tvContainer.appendChild(iframe);
 
+            const tvSymbol = TRADINGVIEW_SYMBOLS[coinId];
             const config = JSON.stringify({
-                "symbols": [["BINANCE:BTCUSDT|1D"]],
+                "symbols": [[`${tvSymbol}|1D`]],
                 "lineWidth": 2,
                 "lineType": 0,
                 "chartType": "area",
