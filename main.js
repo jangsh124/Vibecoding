@@ -18,6 +18,9 @@ if (localStorage.getItem('theme') === 'dark-mode') {
 
 let currentCryptoPrices = []; // Global object to store latest crypto prices
 
+// Only show these 6 coins
+const COIN_IDS = 'bitcoin,ethereum,ripple,chainlink,bittensor,numeraire';
+
 function renderCoinGrid() {
     const coinGrid = document.getElementById('coin-grid');
 
@@ -89,7 +92,7 @@ async function fetchCryptoPrices() {
 
     try {
         const data = await fetchWithRetry(
-            'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false'
+            `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COIN_IDS}&order=market_cap_desc&sparkline=false`
         );
         console.log('Fetched data:', data);
 
