@@ -57,6 +57,15 @@ header p {
     text-shadow: 0 0 10px var(--secondary-color);
 }
 
+#last-updated {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .theme-switcher {
     position: absolute;
     top: 10px;
