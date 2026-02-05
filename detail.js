@@ -157,7 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             iframeDoc.open();
             iframeDoc.write(`<!DOCTYPE html>
-<html><head><style>body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head>
+<html style="height:100%;margin:0;">
+<head><style>html,body,.tradingview-widget-container,.tradingview-widget-container__widget{height:100%;width:100%;margin:0;padding:0;overflow:hidden;background:transparent;}</style></head>
 <body>
 <div class="tradingview-widget-container">
   <div class="tradingview-widget-container__widget"></div>
