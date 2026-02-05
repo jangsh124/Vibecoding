@@ -123,9 +123,12 @@ export const cryptoData = {
     "ripple": {
         "founder": "Chris Larsen & Jed McCaleb",
         "origin": "Designed to enable fast, low-cost international payments for financial institutions.",
+        "vision2030": "In 2030, XRP powers instant cross-border payments for banks worldwide, replacing legacy SWIFT infrastructure.",
         "brandColor": "#23292F",
         "institutionalPredictions": [
-            { "firm": "Tom Lee", "price": "$5" }
+            { "firm": "Tom Lee", "price": "$5" },
+            { "firm": "Standard Chartered", "price": "$12.50" },
+            { "firm": "Ark Invest", "price": "$8" }
         ],
         "roadmap": {
             2026: "Regulatory Clarity Achieved: Ripple secures favorable legal status in key jurisdictions like the US and UK.",
@@ -133,6 +136,60 @@ export const cryptoData = {
             2028: "DeFi on XRP Ledger: The XRPL amendment for native AMM and lending protocols is fully operational.",
             2029: "Central Bank Partnerships: Several central banks begin using the XRP Ledger for CBDC settlement tests.",
             2030: "Global Payments Standard: XRP is used by a significant portion of the global banking system for real-time gross settlement."
+        }
+    },
+    "chainlink": {
+        "founder": "Sergey Nazarov & Steve Ellis",
+        "origin": "Launched in 2017 to connect smart contracts with real-world data through decentralized oracle networks.",
+        "vision2030": "In 2030, Chainlink oracles power trillions of dollars in tokenized assets, bridging blockchain and traditional finance.",
+        "brandColor": "#375BD2",
+        "institutionalPredictions": [
+            { "firm": "Ark Invest", "price": "$300" },
+            { "firm": "VanEck", "price": "$150" },
+            { "firm": "Standard Chartered", "price": "$75" }
+        ],
+        "roadmap": {
+            2026: "CCIP Expansion: Cross-Chain Interoperability Protocol becomes the standard for multi-chain token transfers.",
+            2027: "Staking V2 Launch: Full economic security through staking, with slashing for underperforming node operators.",
+            2028: "DECO Privacy Proofs: Zero-knowledge oracle proofs enable private verification of off-chain data on-chain.",
+            2029: "Banking Integration: Major financial institutions use Chainlink for real-time asset pricing and settlement.",
+            2030: "Universal Data Layer: Chainlink becomes the default infrastructure layer connecting all blockchains to the real world."
+        }
+    },
+    "bittensor": {
+        "founder": "Jacob Robert Steeves (Const) & Ala Shaabana",
+        "origin": "Created to build a decentralized AI network where machine learning models are incentivized through blockchain.",
+        "vision2030": "In 2030, Bittensor powers a decentralized AI marketplace where anyone can contribute and access intelligence.",
+        "brandColor": "#000000",
+        "institutionalPredictions": [
+            { "firm": "Grayscale", "price": "$2,500" },
+            { "firm": "Pantera Capital", "price": "$5,000" },
+            { "firm": "Messari", "price": "$1,800" }
+        ],
+        "roadmap": {
+            2026: "Subnet Explosion: Hundreds of specialized AI subnets launch, covering NLP, computer vision, and generative AI.",
+            2027: "Enterprise AI Adoption: Corporations begin using Bittensor subnets for cost-effective AI inference at scale.",
+            2028: "Dynamic TAO: Fully decentralized subnet governance enables community-driven allocation of network incentives.",
+            2029: "AI Agent Economy: Autonomous AI agents trade compute and intelligence on Bittensor, creating a machine economy.",
+            2030: "Decentralized Superintelligence: Bittensor's collective network rivals centralized AI labs in capability and accessibility."
+        }
+    },
+    "numeraire": {
+        "founder": "Richard Craib",
+        "origin": "Founded in 2017, Numerai is a hedge fund powered by predictions from thousands of anonymous data scientists.",
+        "vision2030": "In 2030, Numerai's decentralized intelligence network manages billions in assets using crowd-sourced AI models.",
+        "brandColor": "#12B4C0",
+        "institutionalPredictions": [
+            { "firm": "Crypto Research Group", "price": "$150" },
+            { "firm": "Digital Asset Research", "price": "$80" },
+            { "firm": "Messari", "price": "$120" }
+        ],
+        "roadmap": {
+            2026: "Numerai Signals Expansion: The platform opens new data signal types, attracting quantitative researchers globally.",
+            2027: "Staking Rewards Overhaul: New staking mechanisms better align data scientist incentives with fund performance.",
+            2028: "Institutional Data Marketplace: Hedge funds and banks license Numerai's meta-model for their own strategies.",
+            2029: "Decentralized Fund Governance: NMR holders gain voting power over fund strategy parameters and fee structures.",
+            2030: "AI-Powered Global Fund: Numerai becomes one of the largest AI-managed hedge funds, fully powered by decentralized intelligence."
         }
     },
     "dogecoin": {
