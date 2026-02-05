@@ -118,6 +118,28 @@ body {
 @keyframes glitch-effect { 0% { opacity: 0.8; } 100% { opacity: 1; } }
 #time-slider { width: 100%; }
 
+.tradingview-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--primary-glow);
+}
+
+.tradingview-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-glow);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.tradingview-widget-container {
+    width: 100%;
+    height: 500px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .back-button { position: absolute; top: 20px; left: 20px; padding: 10px 15px; border-radius: 20px; background-color: var(--card-background); color: var(--primary-glow); border: 1px solid var(--primary-glow); text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
 .back-button:hover { background-color: var(--primary-glow); color: var(--background-color); box-shadow: 0 0 15px var(--primary-glow); }
