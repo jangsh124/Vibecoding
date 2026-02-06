@@ -5,12 +5,19 @@ class CoinCard extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['coin-data'];
+        return ['coin-data', 'price-direction'];
     }
 
     connectedCallback() {
         this.render();
         this.addEventListener('click', this.handleClick);
+        // Trigger flash animation based on price direction
+        const direction = this.getAttribute('price-direction');
+        if (direction === 'up') {
+            this.classList.add('flash-up');
+        } else if (direction === 'down') {
+            this.classList.add('flash-down');
+        }
     }
 
     disconnectedCallback() {
@@ -57,6 +64,7 @@ class CoinCard extends HTMLElement {
         }
 
         const glowColor = priceChange >= 0 ? '#00ff7f' : '#ff005a'; // Emerald Green or Ruby Red
+        const direction = this.getAttribute('price-direction');
 
         this.shadowRoot.innerHTML = `
             <style>
@@ -121,6 +129,20 @@ class CoinCard extends HTMLElement {
                     font-size: 0.9rem;
                     color: var(--text-secondary-color, #aaa);
                     margin-top: 5px;
+                }
+                @keyframes flashUp {
+                    0% { background: rgba(0, 255, 127, 0.25); }
+                    100% { background: var(--card-background); }
+                }
+                @keyframes flashDown {
+                    0% { background: rgba(255, 0, 90, 0.25); }
+                    100% { background: var(--card-background); }
+                }
+                :host(.flash-up) {
+                    animation: flashUp 1s ease-out;
+                }
+                :host(.flash-down) {
+                    animation: flashDown 1s ease-out;
                 }
             </style>
             <img src="${coin.image}" alt="${coin.name}" class="coin-image">
