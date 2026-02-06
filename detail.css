@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-    --primary-glow: #00ff00;
-    --text-color: #f0f2f5;
-    --background-color: #0d0d0d;
-    --card-background: rgba(26, 26, 26, 0.7);
+    --primary-glow: #00e5ff;
+    --text-color: #e0e8f0;
+    --background-color: #050a18;
+    --card-background: rgba(10, 20, 40, 0.7);
     --glow-intensity: 0;
-    --primary-glow-rgb: 247, 147, 26;
+    --primary-glow-rgb: 0, 229, 255;
 }
 
 body { 
