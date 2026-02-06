@@ -89,6 +89,68 @@ main {
     }
 }
 
+/* Skeleton loading cards */
+.skeleton-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 15px;
+    background: var(--card-background);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.skeleton-line {
+    background: linear-gradient(90deg, rgba(0, 229, 255, 0.05) 25%, rgba(0, 229, 255, 0.12) 50%, rgba(0, 229, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+}
+
+.skeleton-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.skeleton-title {
+    width: 60%;
+    height: 20px;
+    margin-bottom: 8px;
+}
+
+.skeleton-subtitle {
+    width: 35%;
+    height: 14px;
+    margin-bottom: 16px;
+}
+
+.skeleton-price {
+    width: 50%;
+    height: 24px;
+    margin-bottom: 8px;
+}
+
+.skeleton-change {
+    width: 30%;
+    height: 16px;
+    margin-bottom: 10px;
+}
+
+.skeleton-cap {
+    width: 55%;
+    height: 14px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
