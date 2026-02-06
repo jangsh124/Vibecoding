@@ -38,6 +38,28 @@
         </div>
         <span class="refresh-label">Auto-refresh</span>
     </div>
+    <section class="fng-section" id="fng-section">
+        <div class="fng-gauge">
+            <svg viewBox="0 0 200 120" class="fng-svg">
+                <defs>
+                    <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ea4335"/>
+                        <stop offset="25%" stop-color="#f59e42"/>
+                        <stop offset="50%" stop-color="#facc15"/>
+                        <stop offset="75%" stop-color="#66bb6a"/>
+                        <stop offset="100%" stop-color="#22c55e"/>
+                    </linearGradient>
+                </defs>
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="14" stroke-linecap="round"/>
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="14" stroke-linecap="round"/>
+                <line id="fng-needle" x1="100" y1="100" x2="20" y2="100" stroke="var(--text-color)" stroke-width="2.5" stroke-linecap="round" style="transform-origin: 100px 100px;"/>
+                <circle cx="100" cy="100" r="5" fill="var(--text-color)"/>
+            </svg>
+            <div class="fng-value" id="fng-value">--</div>
+            <div class="fng-label" id="fng-label">Loading...</div>
+        </div>
+        <div class="fng-title">Fear & Greed Index</div>
+    </section>
     <main id="coin-grid">
     </main>
     <script src="main.js" type="module"></script>

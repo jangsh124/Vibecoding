@@ -216,6 +216,47 @@ async function fetchAndStart() {
 
 fetchAndStart(); // Initial fetch and start countdown
 
+// --- Fear & Greed Index ---
+function getFngColor(value) {
+    if (value <= 25) return '#ea4335';
+    if (value <= 45) return '#f59e42';
+    if (value <= 55) return '#facc15';
+    if (value <= 75) return '#66bb6a';
+    return '#22c55e';
+}
+
+function updateFngGauge(value, classification) {
+    const needle = document.getElementById('fng-needle');
+    const valueEl = document.getElementById('fng-value');
+    const labelEl = document.getElementById('fng-label');
+    if (!needle || !valueEl || !labelEl) return;
+
+    // Needle rotation: 0 = -90deg (left), 100 = 90deg (right)
+    const angle = -90 + (value / 100) * 180;
+    needle.style.transform = `rotate(${angle}deg)`;
+
+    valueEl.textContent = value;
+    const color = getFngColor(value);
+    valueEl.style.color = color;
+    labelEl.textContent = classification;
+    labelEl.style.color = color;
+}
+
+async function fetchFearAndGreed() {
+    try {
+        const res = await fetch('https://api.alternative.me/fng/?limit=1');
+        const json = await res.json();
+        const data = json.data[0];
+        updateFngGauge(parseInt(data.value), data.value_classification);
+    } catch (err) {
+        console.error('Fear & Greed fetch failed:', err);
+        const labelEl = document.getElementById('fng-label');
+        if (labelEl) labelEl.textContent = 'Unavailable';
+    }
+}
+
+fetchFearAndGreed();
+
 // --- Floating bouncing coins (XP screensaver style) ---
 const FLOATING_COINS = [
     { symbol: '₿', color: '#F7931A' },   // Bitcoin
