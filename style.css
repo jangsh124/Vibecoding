@@ -11,8 +11,280 @@
     --glow-color: rgba(0, 229, 255, 0.5);
 }
 
+/* Top navigation */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    background: rgba(5, 10, 24, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+    z-index: 100;
+}
+
+.nav-left {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-balance {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.nav-link {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--primary-color);
+}
+
+.nav-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--primary-color);
+    background: rgba(0, 229, 255, 0.15);
+    color: var(--primary-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover {
+    background: var(--primary-color);
+    color: var(--background-color);
+    box-shadow: 0 0 12px var(--shadow-color);
+}
+
+.nav-btn-outline {
+    background: transparent;
+    border-color: var(--text-secondary-color);
+    color: var(--text-secondary-color);
+}
+
+.nav-btn-outline:hover {
+    border-color: #ff5555;
+    color: #ff5555;
+    background: rgba(255, 85, 85, 0.1);
+    box-shadow: none;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal {
+    background: linear-gradient(135deg, #0a1628, #0d1a30);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--text-color); }
+
+.modal-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 20px;
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    background: rgba(5, 10, 24, 0.8);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    transition: border-color 0.3s;
+}
+
+.modal-input:focus {
+    border-color: var(--primary-color);
+}
+
+.modal-error {
+    color: #ff5555;
+    font-size: 0.8rem;
+    margin: 0 0 10px;
+    min-height: 18px;
+}
+
+.modal-submit {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary-color);
+    color: var(--background-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.modal-submit:hover {
+    box-shadow: 0 0 16px var(--shadow-color);
+    transform: translateY(-1px);
+}
+
+.modal-switch {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    margin-top: 14px;
+}
+
+.modal-switch a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Trade modal extras */
+.trade-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    margin-bottom: 16px;
+}
+
+.trade-info strong {
+    color: var(--text-color);
+}
+
+.trade-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.trade-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.trade-tab.active {
+    background: rgba(0, 229, 255, 0.15);
+    color: var(--primary-color);
+}
+
+.trade-tab.sell-active {
+    background: rgba(255, 85, 85, 0.15);
+    color: #ff5555;
+}
+
+.trade-input-group {
+    margin-bottom: 12px;
+}
+
+.trade-input-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.trade-coin-amount {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    margin-top: 4px;
+    display: block;
+}
+
+.trade-quick-btns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.trade-quick {
+    flex: 1;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    background: transparent;
+    color: var(--text-secondary-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.trade-quick:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
 body {
     font-family: 'Poppins', sans-serif;
+    padding-top: 56px;
     background-color: var(--background-color);
     color: var(--text-color);
     margin: 0;

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio — Crypto Insight</title>
+    <meta name="theme-color" content="#050a18">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23050a18' stroke='%2300e5ff' stroke-width='4'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='%2300e5ff' font-family='sans-serif' font-weight='bold'>CI</text></svg>">
+    <link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-left"><a href="/" style="color:inherit;text-decoration:none;">Crypto Insight</a></div>
+        <div class="nav-right">
+            <a href="/" class="nav-link">Dashboard</a>
+            <span class="nav-user" id="nav-user"></span>
+            <button class="nav-btn nav-btn-outline" id="nav-logout">Logout</button>
+        </div>
+    </nav>
+
+    <div class="portfolio-container">
+        <div class="portfolio-header">
+            <h1>My Portfolio</h1>
+            <div class="portfolio-summary">
+                <div class="summary-card">
+                    <span class="summary-label">Total Value</span>
+                    <span class="summary-value" id="total-value">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Cash Balance</span>
+                    <span class="summary-value" id="cash-balance">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Total P&L</span>
+                    <span class="summary-value" id="total-pnl">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="holdings-section">
+            <h2>Holdings</h2>
+            <div id="holdings-list" class="holdings-list">
+                <p class="empty-msg">No holdings yet. Go to the Dashboard to start trading!</p>
+            </div>
+        </section>
+
+        <section class="tx-section">
+            <h2>Transaction History</h2>
+            <div id="tx-list" class="tx-list">
+                <p class="empty-msg">No transactions yet.</p>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="portfolio.js"></script>
+</body>
+</html>
