@@ -57,9 +57,10 @@ function getCachedPrices() {
 function renderPieChart(holdingsData, cashBalance) {
     const chartEl = document.getElementById('pie-chart');
     const legendEl = document.getElementById('chart-legend');
+    const cashEl = document.getElementById('chart-cash');
     if (!chartEl || !legendEl) return;
 
-    // Build segments: each holding + cash
+    // Pie chart = coin holdings only (no cash)
     const segments = [];
     holdingsData.forEach(h => {
         if (h.value > 0) {
@@ -70,41 +71,56 @@ function renderPieChart(holdingsData, cashBalance) {
             });
         }
     });
-    if (cashBalance > 0) {
-        segments.push({ label: 'Cash', value: cashBalance, color: '#4a5568' });
-    }
 
-    const total = segments.reduce((sum, s) => sum + s.value, 0);
-    if (total === 0) {
+    const totalCoins = segments.reduce((sum, s) => sum + s.value, 0);
+
+    if (totalCoins === 0) {
         chartEl.style.background = '#1a2332';
-        legendEl.innerHTML = '<p style="color:#8899aa;font-size:0.85rem;">No data</p>';
-        return;
+        legendEl.innerHTML = '<p style="color:#8899aa;font-size:0.85rem;">No coin holdings</p>';
+    } else {
+        // Build conic-gradient (coins only)
+        let cumPercent = 0;
+        const gradientParts = [];
+        segments.forEach(s => {
+            const pct = (s.value / totalCoins) * 100;
+            gradientParts.push(`${s.color} ${cumPercent}% ${cumPercent + pct}%`);
+            cumPercent += pct;
+        });
+        chartEl.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+
+        // Update center label with total coin value
+        const centerLabel = document.querySelector('.pie-center-label');
+        if (centerLabel) {
+            centerLabel.textContent = `$${totalCoins.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+        }
+
+        // Build legend (coins only)
+        legendEl.innerHTML = '';
+        segments.forEach(s => {
+            const pct = ((s.value / totalCoins) * 100).toFixed(1);
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            item.innerHTML = `
+                <span class="legend-dot" style="background:${s.color}"></span>
+                <span class="legend-label">${s.label}</span>
+                <span class="legend-pct">${pct}%</span>
+                <span class="legend-val">$${s.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            `;
+            legendEl.appendChild(item);
+        });
     }
 
-    // Build conic-gradient
-    let cumPercent = 0;
-    const gradientParts = [];
-    segments.forEach(s => {
-        const pct = (s.value / total) * 100;
-        gradientParts.push(`${s.color} ${cumPercent}% ${cumPercent + pct}%`);
-        cumPercent += pct;
-    });
-    chartEl.style.background = `conic-gradient(${gradientParts.join(', ')})`;
-
-    // Build legend
-    legendEl.innerHTML = '';
-    segments.forEach(s => {
-        const pct = ((s.value / total) * 100).toFixed(1);
-        const item = document.createElement('div');
-        item.className = 'legend-item';
-        item.innerHTML = `
-            <span class="legend-dot" style="background:${s.color}"></span>
-            <span class="legend-label">${s.label}</span>
-            <span class="legend-pct">${pct}%</span>
-            <span class="legend-val">$${s.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+    // Cash shown separately
+    if (cashEl) {
+        const totalAssets = totalCoins + cashBalance;
+        const cashPct = totalAssets > 0 ? ((cashBalance / totalAssets) * 100).toFixed(1) : '0.0';
+        cashEl.innerHTML = `
+            <span class="cash-icon">💵</span>
+            <span class="cash-label">Cash</span>
+            <span class="cash-amount">$${cashBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="cash-pct">${cashPct}% of total</span>
         `;
-        legendEl.appendChild(item);
-    });
+    }
 }
 
 async function loadPortfolio() {
