@@ -215,3 +215,68 @@ async function fetchAndStart() {
 }
 
 fetchAndStart(); // Initial fetch and start countdown
+
+// --- Floating bouncing coins (XP screensaver style) ---
+const FLOATING_COINS = [
+    { symbol: '₿', color: '#F7931A' },   // Bitcoin
+    { symbol: 'Ξ', color: '#627EEA' },    // Ethereum
+    { symbol: '✕', color: '#23292F' },    // XRP
+    { symbol: '⬡', color: '#375BD2' },    // Chainlink
+    { symbol: 'τ', color: '#00e5ff' },    // Bittensor
+    { symbol: 'N', color: '#12B4C0' },    // Numeraire
+    { symbol: '₿', color: '#F7931A' },   // Bitcoin (extra)
+    { symbol: 'Ξ', color: '#627EEA' },    // Ethereum (extra)
+];
+
+function initFloatingCoins() {
+    const container = document.getElementById('floating-coins');
+    if (!container) return;
+
+    const coins = FLOATING_COINS.map(({ symbol, color }) => {
+        const el = document.createElement('span');
+        el.className = 'floating-coin';
+        el.textContent = symbol;
+        el.style.color = color;
+        container.appendChild(el);
+
+        // Random starting position
+        const x = Math.random() * (window.innerWidth - 40);
+        const y = Math.random() * (window.innerHeight - 40);
+        // Random speed (1~2.5px per frame) and direction
+        const speed = 0.5 + Math.random() * 1.5;
+        const angle = Math.random() * Math.PI * 2;
+
+        return {
+            el,
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: el.offsetWidth || 32,
+        };
+    });
+
+    function animate() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+
+        coins.forEach(coin => {
+            coin.x += coin.vx;
+            coin.y += coin.vy;
+
+            // Bounce off edges
+            if (coin.x <= 0) { coin.x = 0; coin.vx *= -1; }
+            if (coin.x >= w - coin.size) { coin.x = w - coin.size; coin.vx *= -1; }
+            if (coin.y <= 0) { coin.y = 0; coin.vy *= -1; }
+            if (coin.y >= h - coin.size) { coin.y = h - coin.size; coin.vy *= -1; }
+
+            coin.el.style.transform = `translate(${coin.x}px, ${coin.y}px)`;
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
+initFloatingCoins();
