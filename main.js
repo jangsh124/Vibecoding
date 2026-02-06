@@ -131,6 +131,11 @@ async function fetchCryptoPrices() {
         currentCryptoPrices.forEach(c => { previousPrices[c.id] = c.current_price; });
 
         currentCryptoPrices = data;
+
+        // Cache prices in localStorage for portfolio page
+        const priceCache = {};
+        data.forEach(c => { priceCache[c.id] = c.current_price; });
+        localStorage.setItem('ci_priceCache', JSON.stringify({ prices: priceCache, timestamp: Date.now() }));
         renderCoinGrid();
         updateTimestamp();
         startCountdown(); // Reset countdown after successful fetch

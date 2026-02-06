@@ -129,6 +129,107 @@ body {
     color: var(--text-color);
 }
 
+/* Pie Chart */
+.chart-section {
+    margin-bottom: 40px;
+}
+
+.chart-section h2 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.chart-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    background: var(--card-background);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    border-radius: 14px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.pie-chart-container {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.pie-chart {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #1a2332;
+    position: relative;
+}
+
+.pie-chart::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #0a1628;
+}
+
+.pie-center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    font-weight: 600;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.chart-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    color: var(--text-color);
+    font-weight: 600;
+    min-width: 80px;
+}
+
+.legend-pct {
+    color: var(--primary-color);
+    font-weight: 600;
+    min-width: 50px;
+    text-align: right;
+}
+
+.legend-val {
+    color: var(--text-secondary-color);
+    min-width: 100px;
+    text-align: right;
+}
+
 .holdings-section, .tx-section {
     margin-bottom: 40px;
 }
@@ -227,6 +328,9 @@ body {
 
 @media (max-width: 600px) {
     .portfolio-summary { grid-template-columns: 1fr; }
+    .chart-wrapper { flex-direction: column; gap: 20px; }
+    .pie-chart { width: 180px; height: 180px; }
+    .pie-chart::after { width: 90px; height: 90px; }
     .holding-row { grid-template-columns: 1fr 1fr; gap: 8px; }
     .tx-row { grid-template-columns: 1fr 1fr; gap: 4px; }
 }
