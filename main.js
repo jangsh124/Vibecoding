@@ -1,8 +1,11 @@
 import './components/coin-card.js';
 
 let currentCryptoPrices = []; // Global object to store latest crypto prices
+let previousPrices = {}; // Track previous prices for flash animation
 let currentSort = 'market_cap';
 let sortDescending = true;
+
+const REFRESH_INTERVAL = 30; // seconds
 
 // Only show these 6 coins
 const COIN_IDS = 'bitcoin,ethereum,ripple,chainlink,bittensor,numeraire';
@@ -43,6 +46,11 @@ function renderCoinGrid() {
         filtered.forEach(coin => {
             const coinCard = document.createElement('coin-card');
             coinCard.setAttribute('coin-data', JSON.stringify(coin));
+            // Compare with previous price to show flash direction
+            const prev = previousPrices[coin.id];
+            if (prev !== undefined && prev !== coin.current_price) {
+                coinCard.setAttribute('price-direction', coin.current_price > prev ? 'up' : 'down');
+            }
             fragment.appendChild(coinCard);
         });
     }
@@ -118,9 +126,20 @@ async function fetchCryptoPrices() {
         );
         console.log('Fetched data:', data);
 
+        // Save previous prices before updating
+        currentCryptoPrices.forEach(c => { previousPrices[c.id] = c.current_price; });
+
         currentCryptoPrices = data;
         renderCoinGrid();
         updateTimestamp();
+        startCountdown(); // Reset countdown after successful fetch
+
+        // Clear direction flags after animation plays
+        setTimeout(() => {
+            document.querySelectorAll('coin-card[price-direction]').forEach(card => {
+                card.removeAttribute('price-direction');
+            });
+        }, 1000);
 
     } catch (error) {
         console.error('Error fetching crypto prices:', error);
@@ -171,5 +190,28 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 
 updateSortButtons();
 
-fetchCryptoPrices(); // Initial fetch and display
-setInterval(fetchCryptoPrices, 300000); // 5 minutes
+// Refresh countdown progress bar
+let countdownTimer = null;
+function startCountdown() {
+    const bar = document.getElementById('refresh-bar');
+    if (!bar) return;
+    let remaining = REFRESH_INTERVAL;
+    bar.style.width = '100%';
+
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
+        remaining--;
+        bar.style.width = `${(remaining / REFRESH_INTERVAL) * 100}%`;
+        if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            fetchCryptoPrices();
+        }
+    }, 1000);
+}
+
+async function fetchAndStart() {
+    await fetchCryptoPrices();
+    startCountdown();
+}
+
+fetchAndStart(); // Initial fetch and start countdown
