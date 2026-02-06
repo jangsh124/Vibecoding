@@ -42,7 +42,8 @@ class CoinCard extends HTMLElement {
         const priceChange = coin.price_change_percentage_24h;
         const priceChangeColor = priceChange >= 0 ? 'var(--primary-color)' : 'var(--secondary-color)';
         const formattedPrice = coin.current_price ? `$${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A';
-        const formattedPriceChange = priceChange ? `${priceChange.toFixed(2)}%` : 'N/A';
+        const priceChangeArrow = priceChange >= 0 ? '▲' : '▼';
+        const formattedPriceChange = priceChange ? `${priceChangeArrow} ${Math.abs(priceChange).toFixed(2)}%` : 'N/A';
 
         let formattedMarketCap = 'N/A';
         if (coin.market_cap) {
@@ -110,8 +111,11 @@ class CoinCard extends HTMLElement {
                     color: ${priceChangeColor};
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: 4px;
                     margin-bottom: 10px;
+                }
+                .price-change .arrow {
+                    font-size: 0.75rem;
                 }
                 .market-cap {
                     font-size: 0.9rem;
