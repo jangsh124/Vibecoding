@@ -65,6 +65,62 @@ header p {
     transition: opacity 0.3s ease;
 }
 
+/* Search bar */
+.search-container {
+    position: relative;
+    max-width: 400px;
+    margin: 20px auto 0;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary-color);
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    background: var(--card-background);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+#search-input::placeholder {
+    color: var(--text-secondary-color);
+}
+
+#search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px var(--shadow-color);
+}
+
+#search-input:focus ~ .search-icon,
+.search-container:focus-within .search-icon {
+    color: var(--primary-color);
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary-color);
+    font-size: 1.1rem;
+    padding: 40px 0;
+}
+
 main {
     width: 100%;
     max-width: 1200px;
