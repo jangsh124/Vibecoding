@@ -72,11 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
         detailContainer.style.setProperty('--primary-glow-rgb', brandRgb);
 
         document.body.style.background = `
-            radial-gradient(ellipse at center, ${coin.brandColor}33 0%, var(--background-color) 70%),
-            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+            radial-gradient(ellipse at 30% 20%, ${coin.brandColor}30 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(60, 20, 120, 0.2) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 60%),
+            linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(180deg, #050a18 0%, #0a1628 40%, #0d1a30 70%, #050a18 100%)
         `;
-        document.body.style.backgroundSize = '100% 100%, 50px 50px, 50px 50px';
+        document.body.style.backgroundSize = '100% 100%, 100% 100%, 100% 100%, 50px 50px, 50px 50px, 100% 100%';
         document.body.style.backgroundAttachment = 'fixed';
 
         const priceChartSection = createPriceChart(coin.institutionalPredictions);
