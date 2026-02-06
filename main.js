@@ -69,9 +69,19 @@ async function fetchCryptoPrices() {
     const coinGrid = document.getElementById('coin-grid');
     const isInitialLoad = currentCryptoPrices.length === 0;
 
-    // Only show loading text on the very first load
+    // Only show skeleton on the very first load
     if (isInitialLoad) {
-        coinGrid.innerHTML = `<p style="color: var(--secondary-color); text-align: center;">Loading...</p>`;
+        const skeletonHTML = Array(6).fill(`
+            <div class="skeleton-card">
+                <div class="skeleton-line skeleton-circle"></div>
+                <div class="skeleton-line skeleton-title"></div>
+                <div class="skeleton-line skeleton-subtitle"></div>
+                <div class="skeleton-line skeleton-price"></div>
+                <div class="skeleton-line skeleton-change"></div>
+                <div class="skeleton-line skeleton-cap"></div>
+            </div>
+        `).join('');
+        coinGrid.innerHTML = skeletonHTML;
     }
 
     try {
