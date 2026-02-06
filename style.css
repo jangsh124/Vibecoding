@@ -11,10 +11,6 @@
     --glow-color: rgba(0, 229, 255, 0.5);
 }
 
-.dark-mode {
-    /* Dark mode is the default theme */
-}
-
 body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--background-color);
@@ -67,21 +63,6 @@ header p {
     margin-top: 6px;
     opacity: 0;
     transition: opacity 0.3s ease;
-}
-
-.theme-switcher {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    padding: 8px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--primary-color);
-    background-color: var(--card-background);
-    color: var(--primary-color);
-    box-shadow: 0 0 15px var(--shadow-color);
-    cursor: pointer;
-    font-size: 0.9rem;
-    backdrop-filter: blur(10px);
 }
 
 main {
