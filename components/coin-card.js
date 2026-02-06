@@ -11,6 +11,18 @@ class CoinCard extends HTMLElement {
     connectedCallback() {
         this.render();
         this.addEventListener('click', this.handleClick);
+        // Trade button inside shadow DOM
+        const tradeBtn = this.shadowRoot.querySelector('.trade-btn');
+        if (tradeBtn) {
+            tradeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const coinData = this.getAttribute('coin-data');
+                if (coinData) {
+                    const coin = JSON.parse(coinData);
+                    if (window.openTradeModal) window.openTradeModal(coin.id);
+                }
+            });
+        }
         // Trigger flash animation based on price direction
         const direction = this.getAttribute('price-direction');
         if (direction === 'up') {
@@ -130,6 +142,24 @@ class CoinCard extends HTMLElement {
                     color: var(--text-secondary-color, #aaa);
                     margin-top: 5px;
                 }
+                .trade-btn {
+                    margin-top: 12px;
+                    padding: 8px 24px;
+                    border-radius: 20px;
+                    border: 1px solid #00e5ff;
+                    background: rgba(0, 229, 255, 0.12);
+                    color: #00e5ff;
+                    font-family: 'Poppins', sans-serif;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+                .trade-btn:hover {
+                    background: #00e5ff;
+                    color: #050a18;
+                    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+                }
                 @keyframes flashUp {
                     0% { background: rgba(0, 255, 127, 0.25); }
                     100% { background: var(--card-background); }
@@ -153,6 +183,7 @@ class CoinCard extends HTMLElement {
                 <span>${formattedPriceChange}</span>
             </div>
             <p class="market-cap">Mkt Cap: ${formattedMarketCap}</p>
+            <button class="trade-btn">Trade</button>
         `;
     }
 }

@@ -1,4 +1,5 @@
 import './components/coin-card.js';
+import { register, login, logout, getCurrentUser, buyCoin, sellCoin } from './auth.js';
 
 let currentCryptoPrices = []; // Global object to store latest crypto prices
 let previousPrices = {}; // Track previous prices for flash animation
@@ -328,3 +329,200 @@ function initFloatingCoins() {
 }
 
 initFloatingCoins();
+
+// --- Auth UI ---
+function updateAuthUI() {
+    const user = getCurrentUser();
+    const loginBtn = document.getElementById('nav-login-btn');
+    const logoutBtn = document.getElementById('nav-logout-btn');
+    const portfolioLink = document.getElementById('nav-portfolio');
+    const balanceEl = document.getElementById('nav-balance');
+
+    if (user) {
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = '';
+        portfolioLink.style.display = '';
+        balanceEl.style.display = '';
+        balanceEl.textContent = `$${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    } else {
+        loginBtn.style.display = '';
+        logoutBtn.style.display = 'none';
+        portfolioLink.style.display = 'none';
+        balanceEl.style.display = 'none';
+    }
+}
+
+// Login modal
+const loginModal = document.getElementById('login-modal');
+let isRegisterMode = false;
+
+document.getElementById('nav-login-btn').addEventListener('click', () => {
+    loginModal.style.display = 'flex';
+    isRegisterMode = false;
+    updateModalMode();
+});
+
+document.getElementById('modal-close').addEventListener('click', () => {
+    loginModal.style.display = 'none';
+    document.getElementById('auth-error').textContent = '';
+});
+
+loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+        loginModal.style.display = 'none';
+        document.getElementById('auth-error').textContent = '';
+    }
+});
+
+document.getElementById('auth-switch-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    isRegisterMode = !isRegisterMode;
+    updateModalMode();
+});
+
+function updateModalMode() {
+    document.getElementById('modal-title').textContent = isRegisterMode ? 'Register' : 'Login';
+    document.getElementById('auth-submit').textContent = isRegisterMode ? 'Create Account' : 'Login';
+    document.getElementById('auth-switch-text').textContent = isRegisterMode ? 'Already have an account?' : "Don't have an account?";
+    document.getElementById('auth-switch-link').textContent = isRegisterMode ? 'Login' : 'Register';
+    document.getElementById('auth-error').textContent = '';
+}
+
+document.getElementById('auth-submit').addEventListener('click', () => {
+    const username = document.getElementById('auth-username').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const result = isRegisterMode ? register(username, password) : login(username, password);
+
+    if (result.ok) {
+        loginModal.style.display = 'none';
+        document.getElementById('auth-username').value = '';
+        document.getElementById('auth-password').value = '';
+        document.getElementById('auth-error').textContent = '';
+        updateAuthUI();
+    } else {
+        document.getElementById('auth-error').textContent = result.msg;
+    }
+});
+
+document.getElementById('nav-logout-btn').addEventListener('click', () => {
+    logout();
+    updateAuthUI();
+});
+
+updateAuthUI();
+
+// --- Trade modal ---
+let tradeMode = 'buy';
+let tradeCoin = null;
+
+window.openTradeModal = function(coinId) {
+    const user = getCurrentUser();
+    if (!user) {
+        loginModal.style.display = 'flex';
+        return;
+    }
+
+    const coin = currentCryptoPrices.find(c => c.id === coinId);
+    if (!coin) return;
+    tradeCoin = coin;
+    tradeMode = 'buy';
+
+    const modal = document.getElementById('trade-modal');
+    document.getElementById('trade-title').textContent = `Trade ${coin.name}`;
+    document.getElementById('trade-price').textContent = `$${coin.current_price.toLocaleString()}`;
+    document.getElementById('trade-balance').textContent = `$${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+    document.getElementById('trade-amount').value = '';
+    document.getElementById('trade-coin-amount').textContent = '= 0 coins';
+    document.getElementById('trade-error').textContent = '';
+    updateTradeTab();
+    modal.style.display = 'flex';
+};
+
+document.getElementById('trade-close').addEventListener('click', () => {
+    document.getElementById('trade-modal').style.display = 'none';
+});
+
+document.getElementById('trade-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'trade-modal') e.target.style.display = 'none';
+});
+
+document.getElementById('trade-buy-tab').addEventListener('click', () => {
+    tradeMode = 'buy';
+    updateTradeTab();
+});
+
+document.getElementById('trade-sell-tab').addEventListener('click', () => {
+    tradeMode = 'sell';
+    updateTradeTab();
+});
+
+function updateTradeTab() {
+    const buyTab = document.getElementById('trade-buy-tab');
+    const sellTab = document.getElementById('trade-sell-tab');
+    const submitBtn = document.getElementById('trade-submit');
+
+    buyTab.classList.toggle('active', tradeMode === 'buy');
+    buyTab.classList.remove('sell-active');
+    sellTab.classList.toggle('sell-active', tradeMode === 'sell');
+    sellTab.classList.toggle('active', false);
+
+    submitBtn.textContent = tradeMode === 'buy' ? 'Buy' : 'Sell';
+    submitBtn.style.background = tradeMode === 'buy' ? 'var(--primary-color)' : '#ff5555';
+
+    document.getElementById('trade-amount').value = '';
+    document.getElementById('trade-coin-amount').textContent = '= 0 coins';
+    document.getElementById('trade-error').textContent = '';
+}
+
+document.getElementById('trade-amount').addEventListener('input', (e) => {
+    const usd = parseFloat(e.target.value) || 0;
+    if (tradeCoin) {
+        const coins = usd / tradeCoin.current_price;
+        document.getElementById('trade-coin-amount').textContent = `= ${coins.toFixed(6)} ${tradeCoin.symbol.toUpperCase()}`;
+    }
+});
+
+// Quick percentage buttons
+document.querySelectorAll('.trade-quick').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const pct = parseInt(btn.dataset.pct);
+        const user = getCurrentUser();
+        if (!user || !tradeCoin) return;
+
+        let maxAmount;
+        if (tradeMode === 'buy') {
+            maxAmount = user.balance;
+        } else {
+            const holding = user.holdings[tradeCoin.id];
+            maxAmount = holding ? holding.amount * tradeCoin.current_price : 0;
+        }
+
+        const amount = (maxAmount * pct / 100).toFixed(2);
+        document.getElementById('trade-amount').value = amount;
+        document.getElementById('trade-amount').dispatchEvent(new Event('input'));
+    });
+});
+
+document.getElementById('trade-submit').addEventListener('click', () => {
+    const usdAmount = parseFloat(document.getElementById('trade-amount').value);
+    if (!usdAmount || usdAmount <= 0 || !tradeCoin) {
+        document.getElementById('trade-error').textContent = 'Enter a valid amount';
+        return;
+    }
+
+    const coinAmount = usdAmount / tradeCoin.current_price;
+    let result;
+
+    if (tradeMode === 'buy') {
+        result = buyCoin(tradeCoin.id, tradeCoin.name, coinAmount, tradeCoin.current_price);
+    } else {
+        result = sellCoin(tradeCoin.id, coinAmount, tradeCoin.current_price);
+    }
+
+    if (result.ok) {
+        document.getElementById('trade-modal').style.display = 'none';
+        updateAuthUI();
+    } else {
+        document.getElementById('trade-error').textContent = result.msg;
+    }
+});

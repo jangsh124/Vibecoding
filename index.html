@@ -14,6 +14,61 @@
 </head>
 <body>
     <div id="floating-coins"></div>
+    <nav class="top-nav">
+        <div class="nav-left">Crypto Insight</div>
+        <div class="nav-right">
+            <span class="nav-balance" id="nav-balance" style="display:none;"></span>
+            <a href="/portfolio.html" class="nav-link" id="nav-portfolio" style="display:none;">Portfolio</a>
+            <button class="nav-btn" id="nav-login-btn">Login</button>
+            <button class="nav-btn nav-btn-outline" id="nav-logout-btn" style="display:none;">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal" style="display:none;">
+        <div class="modal">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h2 class="modal-title" id="modal-title">Login</h2>
+            <input type="text" class="modal-input" id="auth-username" placeholder="Username" autocomplete="off">
+            <input type="password" class="modal-input" id="auth-password" placeholder="Password">
+            <p class="modal-error" id="auth-error"></p>
+            <button class="modal-submit" id="auth-submit">Login</button>
+            <p class="modal-switch">
+                <span id="auth-switch-text">Don't have an account?</span>
+                <a href="#" id="auth-switch-link">Register</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Buy/Sell Modal -->
+    <div class="modal-overlay" id="trade-modal" style="display:none;">
+        <div class="modal">
+            <button class="modal-close" id="trade-close">&times;</button>
+            <h2 class="modal-title" id="trade-title">Buy Bitcoin</h2>
+            <div class="trade-info">
+                <span>Price: <strong id="trade-price">$0</strong></span>
+                <span>Balance: <strong id="trade-balance">$0</strong></span>
+            </div>
+            <div class="trade-tabs">
+                <button class="trade-tab active" id="trade-buy-tab">Buy</button>
+                <button class="trade-tab" id="trade-sell-tab">Sell</button>
+            </div>
+            <div class="trade-input-group">
+                <label>Amount (USD)</label>
+                <input type="number" class="modal-input" id="trade-amount" placeholder="0.00" min="0" step="any">
+                <span class="trade-coin-amount" id="trade-coin-amount">= 0 coins</span>
+            </div>
+            <div class="trade-quick-btns">
+                <button class="trade-quick" data-pct="25">25%</button>
+                <button class="trade-quick" data-pct="50">50%</button>
+                <button class="trade-quick" data-pct="75">75%</button>
+                <button class="trade-quick" data-pct="100">Max</button>
+            </div>
+            <p class="modal-error" id="trade-error"></p>
+            <button class="modal-submit" id="trade-submit">Buy</button>
+        </div>
+    </div>
+
     <header>
         <h1>Crypto Insight Dashboard 2026</h1>
         <p>My Watchlist</p>
