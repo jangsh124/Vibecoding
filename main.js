@@ -1,21 +1,5 @@
 import './components/coin-card.js';
 
-const themeSwitcher = document.getElementById('theme-switcher');
-const body = document.body;
-
-themeSwitcher.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark-mode');
-    } else {
-        localStorage.removeItem('theme');
-    }
-});
-
-if (localStorage.getItem('theme') === 'dark-mode') {
-    body.classList.add('dark-mode');
-}
-
 let currentCryptoPrices = []; // Global object to store latest crypto prices
 
 // Only show these 6 coins
