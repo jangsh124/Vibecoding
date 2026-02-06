@@ -1,6 +1,8 @@
 import './components/coin-card.js';
 
 let currentCryptoPrices = []; // Global object to store latest crypto prices
+let currentSort = 'market_cap';
+let sortDescending = true;
 
 // Only show these 6 coins
 const COIN_IDS = 'bitcoin,ethereum,ripple,chainlink,bittensor,numeraire';
@@ -20,7 +22,14 @@ function renderCoinGrid() {
             coin.name.toLowerCase().includes(query) ||
             coin.symbol.toLowerCase().includes(query)
         )
-        : currentCryptoPrices;
+        : [...currentCryptoPrices];
+
+    // Sort filtered results
+    filtered.sort((a, b) => {
+        const valA = a[currentSort] || 0;
+        const valB = b[currentSort] || 0;
+        return sortDescending ? valB - valA : valA - valB;
+    });
 
     // Build new cards in a document fragment to avoid flash
     const fragment = document.createDocumentFragment();
@@ -129,6 +138,38 @@ async function fetchCryptoPrices() {
 // Search filter — re-render grid on input
 const searchInput = document.getElementById('search-input');
 searchInput.addEventListener('input', () => renderCoinGrid());
+
+// Sort buttons
+function updateSortButtons() {
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        const isActive = btn.dataset.sort === currentSort;
+        btn.classList.toggle('active', isActive);
+        const arrow = btn.querySelector('.sort-arrow');
+        if (arrow) arrow.remove();
+        if (isActive) {
+            const arrowSpan = document.createElement('span');
+            arrowSpan.className = 'sort-arrow';
+            arrowSpan.textContent = sortDescending ? ' ▼' : ' ▲';
+            btn.appendChild(arrowSpan);
+        }
+    });
+}
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const sortKey = btn.dataset.sort;
+        if (currentSort === sortKey) {
+            sortDescending = !sortDescending;
+        } else {
+            currentSort = sortKey;
+            sortDescending = true;
+        }
+        updateSortButtons();
+        renderCoinGrid();
+    });
+});
+
+updateSortButtons();
 
 fetchCryptoPrices(); // Initial fetch and display
 setInterval(fetchCryptoPrices, 300000); // 5 minutes
