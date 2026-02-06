@@ -24,7 +24,7 @@ document.getElementById('nav-logout').addEventListener('click', () => {
     window.location.href = '/';
 });
 
-async function fetchPricesWithRetry(ids, retries = 3) {
+async function fetchPricesWithRetry(ids, retries = 2) {
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
             const res = await fetch(
@@ -123,39 +123,8 @@ function renderPieChart(holdingsData, cashBalance) {
     }
 }
 
-async function loadPortfolio() {
-    const user = checkAuth();
-    if (!user) return;
-
-    // Display cash balance
-    document.getElementById('cash-balance').textContent =
-        `$${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-    // Fetch current prices for holdings
+function renderHoldings(user, prices) {
     const holdingIds = Object.keys(user.holdings);
-    let prices = {};
-
-    if (holdingIds.length > 0) {
-        try {
-            const apiPrices = await fetchPricesWithRetry(holdingIds);
-            prices = {};
-            holdingIds.forEach(id => {
-                prices[id] = apiPrices[id]?.usd || 0;
-            });
-        } catch (e) {
-            console.warn('API fetch failed, using cached prices:', e);
-        }
-
-        // Fallback to cached prices from main dashboard
-        const cached = getCachedPrices();
-        holdingIds.forEach(id => {
-            if (!prices[id]) {
-                prices[id] = cached[id] || 0;
-            }
-        });
-    }
-
-    // Render holdings
     const holdingsList = document.getElementById('holdings-list');
     let totalHoldingsValue = 0;
     let totalCost = 0;
@@ -182,7 +151,7 @@ async function loadPortfolio() {
             row.className = 'holding-row';
             row.innerHTML = `
                 <div class="holding-name">${h.name || coinId}<small>${h.amount.toFixed(6)}</small></div>
-                <div class="holding-avg">Avg: $${h.avgCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+                <div class="holding-amount">Avg: $${h.avgCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
                 <div class="holding-value">$${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div class="holding-pnl ${pnl >= 0 ? 'positive' : 'negative'}">
                     ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)
@@ -224,6 +193,36 @@ async function loadPortfolio() {
             `;
             txList.appendChild(row);
         });
+    }
+}
+
+async function loadPortfolio() {
+    const user = checkAuth();
+    if (!user) return;
+
+    // Display cash balance immediately
+    document.getElementById('cash-balance').textContent =
+        `$${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const holdingIds = Object.keys(user.holdings);
+
+    // Step 1: Render IMMEDIATELY with cached prices (no waiting)
+    const cachedPrices = getCachedPrices();
+    renderHoldings(user, cachedPrices);
+
+    // Step 2: Fetch fresh prices in background, then re-render
+    if (holdingIds.length > 0) {
+        try {
+            const apiPrices = await fetchPricesWithRetry(holdingIds);
+            const freshPrices = {};
+            holdingIds.forEach(id => {
+                freshPrices[id] = apiPrices[id]?.usd || cachedPrices[id] || 0;
+            });
+            // Re-render with fresh prices
+            renderHoldings(user, freshPrices);
+        } catch (e) {
+            console.warn('API fetch failed, keeping cached prices:', e);
+        }
     }
 }
 
