@@ -52,8 +52,10 @@
                 </defs>
                 <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="14" stroke-linecap="round"/>
                 <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="14" stroke-linecap="round"/>
-                <line id="fng-needle" x1="100" y1="100" x2="20" y2="100" stroke="var(--text-color)" stroke-width="2.5" stroke-linecap="round" style="transform-origin: 100px 100px;"/>
-                <circle cx="100" cy="100" r="5" fill="var(--text-color)"/>
+                <g id="fng-needle" style="transform-origin: 100px 100px;">
+                    <polygon points="100,30 95,100 105,100" fill="#ffffff" filter="drop-shadow(0 0 6px rgba(255,255,255,0.8))"/>
+                </g>
+                <circle cx="100" cy="100" r="7" fill="#ffffff" filter="drop-shadow(0 0 4px rgba(255,255,255,0.6))"/>
             </svg>
             <div class="fng-value" id="fng-value">--</div>
             <div class="fng-label" id="fng-label">Loading...</div>

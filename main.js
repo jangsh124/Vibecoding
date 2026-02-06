@@ -235,8 +235,15 @@ function updateFngGauge(value, classification) {
     const angle = -90 + (value / 100) * 180;
     needle.style.transform = `rotate(${angle}deg)`;
 
-    valueEl.textContent = value;
+    // Color the needle to match the value
     const color = getFngColor(value);
+    const poly = needle.querySelector('polygon');
+    if (poly) {
+        poly.setAttribute('fill', color);
+        poly.setAttribute('filter', `drop-shadow(0 0 6px ${color})`);
+    }
+
+    valueEl.textContent = value;
     valueEl.style.color = color;
     labelEl.textContent = classification;
     labelEl.style.color = color;
