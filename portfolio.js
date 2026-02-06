@@ -1,6 +1,13 @@
 import { getCurrentUser, logout } from './auth.js';
 
-const COIN_IDS = 'bitcoin,ethereum,ripple,chainlink,bittensor,numeraire';
+const COIN_COLORS = {
+    bitcoin: '#F7931A',
+    ethereum: '#627EEA',
+    ripple: '#00AAE4',
+    chainlink: '#375BD2',
+    bittensor: '#00e5ff',
+    numeraire: '#12B4C0',
+};
 
 function checkAuth() {
     const user = getCurrentUser();
@@ -17,6 +24,89 @@ document.getElementById('nav-logout').addEventListener('click', () => {
     window.location.href = '/';
 });
 
+async function fetchPricesWithRetry(ids, retries = 3) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const res = await fetch(
+                `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd`
+            );
+            if (res.status === 429 && attempt < retries) {
+                await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+                continue;
+            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
+        } catch (e) {
+            if (attempt < retries) {
+                await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+                continue;
+            }
+            throw e;
+        }
+    }
+}
+
+function getCachedPrices() {
+    try {
+        const cached = JSON.parse(localStorage.getItem('ci_priceCache'));
+        if (cached && cached.prices) return cached.prices;
+    } catch (e) {}
+    return {};
+}
+
+function renderPieChart(holdingsData, cashBalance) {
+    const chartEl = document.getElementById('pie-chart');
+    const legendEl = document.getElementById('chart-legend');
+    if (!chartEl || !legendEl) return;
+
+    // Build segments: each holding + cash
+    const segments = [];
+    holdingsData.forEach(h => {
+        if (h.value > 0) {
+            segments.push({
+                label: h.name,
+                value: h.value,
+                color: COIN_COLORS[h.id] || '#888',
+            });
+        }
+    });
+    if (cashBalance > 0) {
+        segments.push({ label: 'Cash', value: cashBalance, color: '#4a5568' });
+    }
+
+    const total = segments.reduce((sum, s) => sum + s.value, 0);
+    if (total === 0) {
+        chartEl.style.background = '#1a2332';
+        legendEl.innerHTML = '<p style="color:#8899aa;font-size:0.85rem;">No data</p>';
+        return;
+    }
+
+    // Build conic-gradient
+    let cumPercent = 0;
+    const gradientParts = [];
+    segments.forEach(s => {
+        const pct = (s.value / total) * 100;
+        gradientParts.push(`${s.color} ${cumPercent}% ${cumPercent + pct}%`);
+        cumPercent += pct;
+    });
+    chartEl.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+
+    // Build legend
+    legendEl.innerHTML = '';
+    segments.forEach(s => {
+        const pct = ((s.value / total) * 100).toFixed(1);
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `
+            <span class="legend-dot" style="background:${s.color}"></span>
+            <span class="legend-label">${s.label}</span>
+            <span class="legend-pct">${pct}%</span>
+            <span class="legend-val">$${s.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        `;
+        legendEl.appendChild(item);
+    });
+}
+
 async function loadPortfolio() {
     const user = checkAuth();
     if (!user) return;
@@ -31,19 +121,29 @@ async function loadPortfolio() {
 
     if (holdingIds.length > 0) {
         try {
-            const res = await fetch(
-                `https://api.coingecko.com/api/v3/simple/price?ids=${holdingIds.join(',')}&vs_currencies=usd`
-            );
-            prices = await res.json();
+            const apiPrices = await fetchPricesWithRetry(holdingIds);
+            prices = {};
+            holdingIds.forEach(id => {
+                prices[id] = apiPrices[id]?.usd || 0;
+            });
         } catch (e) {
-            console.error('Failed to fetch prices:', e);
+            console.warn('API fetch failed, using cached prices:', e);
         }
+
+        // Fallback to cached prices from main dashboard
+        const cached = getCachedPrices();
+        holdingIds.forEach(id => {
+            if (!prices[id]) {
+                prices[id] = cached[id] || 0;
+            }
+        });
     }
 
     // Render holdings
     const holdingsList = document.getElementById('holdings-list');
     let totalHoldingsValue = 0;
     let totalCost = 0;
+    const holdingsForChart = [];
 
     if (holdingIds.length === 0) {
         holdingsList.innerHTML = '<p class="empty-msg">No holdings yet. Go to the Dashboard to start trading!</p>';
@@ -51,7 +151,7 @@ async function loadPortfolio() {
         holdingsList.innerHTML = '';
         holdingIds.forEach(coinId => {
             const h = user.holdings[coinId];
-            const currentPrice = prices[coinId]?.usd || 0;
+            const currentPrice = prices[coinId] || 0;
             const currentValue = h.amount * currentPrice;
             const costBasis = h.amount * h.avgCost;
             const pnl = currentValue - costBasis;
@@ -60,11 +160,13 @@ async function loadPortfolio() {
             totalHoldingsValue += currentValue;
             totalCost += costBasis;
 
+            holdingsForChart.push({ id: coinId, name: h.name || coinId, value: currentValue });
+
             const row = document.createElement('div');
             row.className = 'holding-row';
             row.innerHTML = `
                 <div class="holding-name">${h.name || coinId}<small>${h.amount.toFixed(6)}</small></div>
-                <div class="holding-amount">Avg: $${h.avgCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+                <div class="holding-avg">Avg: $${h.avgCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
                 <div class="holding-value">$${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div class="holding-pnl ${pnl >= 0 ? 'positive' : 'negative'}">
                     ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)
@@ -76,7 +178,7 @@ async function loadPortfolio() {
 
     // Total value & P&L
     const totalValue = user.balance + totalHoldingsValue;
-    const totalPnl = totalValue - 100000; // Starting balance was $100k
+    const totalPnl = totalValue - 100000;
 
     document.getElementById('total-value').textContent =
         `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -84,6 +186,9 @@ async function loadPortfolio() {
     const pnlEl = document.getElementById('total-pnl');
     pnlEl.textContent = `${totalPnl >= 0 ? '+' : ''}$${totalPnl.toFixed(2)}`;
     pnlEl.style.color = totalPnl >= 0 ? '#00ff7f' : '#ff5555';
+
+    // Pie chart
+    renderPieChart(holdingsForChart, user.balance);
 
     // Render transactions
     const txList = document.getElementById('tx-list');
