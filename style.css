@@ -244,11 +244,40 @@
     margin-bottom: 12px;
 }
 
-.trade-input-group label {
+.trade-input-mode {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.trade-input-mode label {
     font-size: 0.8rem;
     color: var(--text-secondary-color);
-    display: block;
-    margin-bottom: 6px;
+}
+
+.input-mode-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.input-mode-toggle span {
+    padding: 3px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+    transition: all 0.2s;
+}
+
+.input-mode-toggle .mode-active {
+    background: var(--primary-color);
+    color: #050a18;
 }
 
 .trade-coin-amount {
