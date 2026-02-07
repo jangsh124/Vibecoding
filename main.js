@@ -419,6 +419,7 @@ updateAuthUI();
 // --- Trade modal ---
 let tradeMode = 'buy';
 let tradeCoin = null;
+let inputMode = 'usd'; // 'usd' or 'qty'
 
 window.openTradeModal = function(coinId) {
     const user = getCurrentUser();
@@ -439,6 +440,8 @@ window.openTradeModal = function(coinId) {
     document.getElementById('trade-amount').value = '';
     document.getElementById('trade-coin-amount').textContent = '= 0 coins';
     document.getElementById('trade-error').textContent = '';
+    inputMode = 'usd';
+    updateInputModeUI();
     updateTradeTab();
     modal.style.display = 'flex';
 };
@@ -475,15 +478,49 @@ function updateTradeTab() {
     submitBtn.style.background = tradeMode === 'buy' ? 'var(--primary-color)' : '#ff5555';
 
     document.getElementById('trade-amount').value = '';
-    document.getElementById('trade-coin-amount').textContent = '= 0 coins';
+    document.getElementById('trade-coin-amount').textContent = inputMode === 'usd' ? '= 0 coins' : '= $0.00';
     document.getElementById('trade-error').textContent = '';
 }
 
+// Input mode toggle (USD / QTY)
+function updateInputModeUI() {
+    const label = document.getElementById('trade-input-label');
+    const modeUsd = document.getElementById('mode-usd');
+    const modeQty = document.getElementById('mode-qty');
+    const input = document.getElementById('trade-amount');
+
+    if (inputMode === 'usd') {
+        label.textContent = 'Amount (USD)';
+        input.placeholder = '0.00';
+        modeUsd.classList.add('mode-active');
+        modeQty.classList.remove('mode-active');
+    } else {
+        label.textContent = tradeCoin ? `Quantity (${tradeCoin.symbol.toUpperCase()})` : 'Quantity';
+        input.placeholder = '0.000000';
+        modeQty.classList.add('mode-active');
+        modeUsd.classList.remove('mode-active');
+    }
+
+    input.value = '';
+    document.getElementById('trade-coin-amount').textContent = inputMode === 'usd' ? '= 0 coins' : '= $0.00';
+    document.getElementById('trade-error').textContent = '';
+}
+
+document.getElementById('input-mode-toggle').addEventListener('click', () => {
+    inputMode = inputMode === 'usd' ? 'qty' : 'usd';
+    updateInputModeUI();
+});
+
 document.getElementById('trade-amount').addEventListener('input', (e) => {
-    const usd = parseFloat(e.target.value) || 0;
-    if (tradeCoin) {
-        const coins = usd / tradeCoin.current_price;
+    const val = parseFloat(e.target.value) || 0;
+    if (!tradeCoin) return;
+
+    if (inputMode === 'usd') {
+        const coins = val / tradeCoin.current_price;
         document.getElementById('trade-coin-amount').textContent = `= ${coins.toFixed(6)} ${tradeCoin.symbol.toUpperCase()}`;
+    } else {
+        const usd = val * tradeCoin.current_price;
+        document.getElementById('trade-coin-amount').textContent = `= $${usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 });
 
@@ -494,30 +531,45 @@ document.querySelectorAll('.trade-quick').forEach(btn => {
         const user = getCurrentUser();
         if (!user || !tradeCoin) return;
 
-        let maxAmount;
-        if (tradeMode === 'buy') {
-            maxAmount = user.balance;
+        if (inputMode === 'usd') {
+            let maxUsd;
+            if (tradeMode === 'buy') {
+                maxUsd = user.balance;
+            } else {
+                const holding = user.holdings[tradeCoin.id];
+                maxUsd = holding ? holding.amount * tradeCoin.current_price : 0;
+            }
+            document.getElementById('trade-amount').value = (maxUsd * pct / 100).toFixed(2);
         } else {
-            const holding = user.holdings[tradeCoin.id];
-            maxAmount = holding ? holding.amount * tradeCoin.current_price : 0;
+            // QTY mode
+            let maxQty;
+            if (tradeMode === 'buy') {
+                maxQty = user.balance / tradeCoin.current_price;
+            } else {
+                const holding = user.holdings[tradeCoin.id];
+                maxQty = holding ? holding.amount : 0;
+            }
+            document.getElementById('trade-amount').value = (maxQty * pct / 100).toFixed(6);
         }
-
-        const amount = (maxAmount * pct / 100).toFixed(2);
-        document.getElementById('trade-amount').value = amount;
         document.getElementById('trade-amount').dispatchEvent(new Event('input'));
     });
 });
 
 document.getElementById('trade-submit').addEventListener('click', () => {
-    const usdAmount = parseFloat(document.getElementById('trade-amount').value);
-    if (!usdAmount || usdAmount <= 0 || !tradeCoin) {
+    const rawValue = parseFloat(document.getElementById('trade-amount').value);
+    if (!rawValue || rawValue <= 0 || !tradeCoin) {
         document.getElementById('trade-error').textContent = 'Enter a valid amount';
         return;
     }
 
-    const coinAmount = usdAmount / tradeCoin.current_price;
-    let result;
+    let coinAmount;
+    if (inputMode === 'usd') {
+        coinAmount = rawValue / tradeCoin.current_price;
+    } else {
+        coinAmount = rawValue; // already in coin quantity
+    }
 
+    let result;
     if (tradeMode === 'buy') {
         result = buyCoin(tradeCoin.id, tradeCoin.name, coinAmount, tradeCoin.current_price);
     } else {

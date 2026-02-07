@@ -54,7 +54,13 @@
                 <button class="trade-tab" id="trade-sell-tab">Sell</button>
             </div>
             <div class="trade-input-group">
-                <label>Amount (USD)</label>
+                <div class="trade-input-mode">
+                    <label id="trade-input-label">Amount (USD)</label>
+                    <button class="input-mode-toggle" id="input-mode-toggle">
+                        <span id="mode-usd" class="mode-active">USD</span>
+                        <span id="mode-qty">QTY</span>
+                    </button>
+                </div>
                 <input type="number" class="modal-input" id="trade-amount" placeholder="0.00" min="0" step="any">
                 <span class="trade-coin-amount" id="trade-coin-amount">= 0 coins</span>
             </div>

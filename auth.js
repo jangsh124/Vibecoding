@@ -94,11 +94,13 @@ export function sellCoin(coinId, amount, pricePerUnit) {
     const user = users[username];
     const holding = user.holdings[coinId];
 
-    if (!holding || holding.amount < amount) return { ok: false, msg: 'Insufficient holdings' };
+    if (!holding || holding.amount < amount - 0.00000001) return { ok: false, msg: 'Insufficient holdings' };
 
-    const totalRevenue = amount * pricePerUnit;
+    // Clamp to actual holding to avoid floating point overshoot
+    const actualAmount = Math.min(amount, holding.amount);
+    const totalRevenue = actualAmount * pricePerUnit;
     user.balance += totalRevenue;
-    holding.amount -= amount;
+    holding.amount -= actualAmount;
 
     if (holding.amount < 0.00000001) {
         delete user.holdings[coinId];
